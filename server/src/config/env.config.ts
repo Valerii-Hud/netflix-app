@@ -5,6 +5,7 @@ dotenv.config({});
 interface EnvironmentVariables {
   MONGO_URI: string | undefined;
   JWT_SECRET: string | undefined;
+  TMDB_API_KEY: string | undefined;
   NODE_ENV: string;
   PORT: number;
   COOKIE_SECRET: string;
@@ -16,4 +17,5 @@ export const ENV_VARS: EnvironmentVariables = {
   PORT: Number(process.env.PORT) || 5000,
   NODE_ENV: process.env.NODE_ENV || 'production',
   COOKIE_SECRET: process.env.COOKIE_SECRET || '',
+  TMDB_API_KEY: process.env.TMDB_API_KEY,
 };

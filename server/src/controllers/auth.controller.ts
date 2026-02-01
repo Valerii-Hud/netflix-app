@@ -49,6 +49,7 @@ export const signup = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 export const login = async (req: AuthRequest, res: Response) => {
   try {
     const { user } = req;
@@ -79,6 +80,15 @@ export const logout = (req: Request, res: Response) => {
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
     isError({ error, functionName: logout.name, handler: 'controller' });
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const checkAuth = (req: AuthRequest, res: Response) => {
+  try {
+    res.status(200).json({ user: req.user });
+  } catch (error) {
+    isError({ error, functionName: checkAuth.name, handler: 'controller' });
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
