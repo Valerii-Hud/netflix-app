@@ -1,7 +1,9 @@
 import chalk from 'chalk';
-import jwt, { type JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { ENV_VARS } from '../config/env.config';
 import type { Response } from 'express';
+import { MAX_TOKEN_AGE } from '../config/auth.config';
+import type mongoose from 'mongoose';
 
 interface ErrorHandler {
   error: unknown;
@@ -19,7 +21,10 @@ export const isError = ({ error, functionName, handler }: ErrorHandler) => {
   return isRegularError;
 };
 
-export const generateToken = (userId: string, res: Response) => {
+export const generateToken = (
+  userId: mongoose.Types.ObjectId,
+  res: Response
+) => {
   try {
     const { JWT_SECRET, NODE_ENV } = ENV_VARS;
 
@@ -33,8 +38,9 @@ export const generateToken = (userId: string, res: Response) => {
     });
 
     res.cookie('secret_token', token, {
-      maxAge: 14 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      sameSite: 'strict',
+      maxAge: MAX_TOKEN_AGE,
       secure: NODE_ENV === 'production',
     });
   } catch (error) {

@@ -1,13 +1,14 @@
 import type { Request, Response } from 'express';
-import { isError } from '../lib/utils';
+import { generateToken, isError } from '../lib/utils';
 import User from '../models/user.model';
 import bcrypt from 'bcryptjs';
+import { ENV_VARS } from '../config/env.config';
+import type { AuthRequest } from '../types';
 
 export const signup = async (req: Request, res: Response) => {
   try {
     const { userName, email, password } = req.body;
 
-    console.log('signup');
     const DEFAULT_PROFILE_PICTURES = [
       '/avatar1.png',
       '/avatar2.png',
@@ -20,7 +21,6 @@ export const signup = async (req: Request, res: Response) => {
       ];
 
     const salt = await bcrypt.genSalt(10);
-
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
@@ -32,6 +32,11 @@ export const signup = async (req: Request, res: Response) => {
 
     newUser.save();
 
+    if (!newUser) {
+      throw new Error();
+    }
+
+    generateToken(newUser._id, res);
     res.status(201).json({
       _id: newUser._id,
       userName: newUser.userName,
@@ -44,5 +49,36 @@ export const signup = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-export const login = async (req: Request, res: Response) => {};
-export const logout = async (req: Request, res: Response) => {};
+export const login = async (req: AuthRequest, res: Response) => {
+  try {
+    const { user } = req;
+    if (user?._id) {
+      generateToken(user._id, res);
+      res.status(200).json({
+        _id: user._id,
+        userName: user.userName,
+        email: user.email,
+        image: user.image,
+        searchHistory: user.searchHistory,
+      });
+    }
+  } catch (error) {
+    isError({ error, functionName: login.name, handler: 'controller' });
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const logout = (req: Request, res: Response) => {
+  const { NODE_ENV } = ENV_VARS;
+  try {
+    res.clearCookie('secure_token', {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: NODE_ENV === 'production',
+    });
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    isError({ error, functionName: logout.name, handler: 'controller' });
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
