@@ -1,18 +1,21 @@
 import express, { Router } from 'express';
+
+import { isMovie } from '../middleware/content.middleware';
 import {
-  getMovieDetails,
-  getMoviesByCategory,
-  getMovieTrailers,
-  getSimilarMovies,
-  getTrendingMovie,
-} from '../controllers/movie.controller';
+  getByCategory,
+  getDetails,
+  getSimilar,
+  getTrailers,
+  getTrending,
+} from '../controllers/content.controller';
 
 const router: Router = express.Router();
 
-router.get('/trending', getTrendingMovie);
-router.get('/:movieId/trailers', getMovieTrailers);
-router.get('/:movieId/details', getMovieDetails);
-router.get('/:movieId/similar', getSimilarMovies);
-router.get('/:category', getMoviesByCategory);
+router.use(isMovie);
+router.get('/trending', getTrending);
+router.get('/:id/trailers', getTrailers);
+router.get('/:id/details', getDetails);
+router.get('/:id/similar', getSimilar);
+router.get('/:category', getByCategory);
 
 export default router;

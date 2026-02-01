@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import User from '../models/user.model';
-import { generateToken, isError } from '../lib/utils';
+import { isError } from '../lib/utils';
 import validator from 'validator';
 import {
   MAX_USERNAME_LENGTH,

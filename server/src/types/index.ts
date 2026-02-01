@@ -12,3 +12,7 @@ export interface User {
 export interface AuthRequest extends Request {
   user?: User;
 }
+
+export interface ContentTypeRequest extends Request {
+  typeOfContent?: 'movie' | 'tv';
+}
