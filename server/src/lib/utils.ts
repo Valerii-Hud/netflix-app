@@ -1,9 +1,11 @@
 import chalk from 'chalk';
-import jwt from 'jsonwebtoken';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { ENV_VARS } from '../config/env.config';
 import type { Response } from 'express';
 import { MAX_TOKEN_AGE } from '../config/auth.config';
 import type mongoose from 'mongoose';
+import { response } from '../middleware/auth.middleware';
+import User from '../models/user.model';
 
 interface ErrorHandler {
   error: unknown;
@@ -47,4 +49,27 @@ export const generateToken = (
     isError({ error, functionName: generateToken.name, handler: 'lib' });
     res.status(500).json({ error: 'Internal Server Error' });
   }
+};
+
+export const getUserById = async (userId: string) => {
+  const user = await User.findById(userId).select('-password');
+  if (!user) {
+    return { user: undefined };
+  }
+  return { user };
+};
+
+export const verifyToken = (token: string) => {
+  const { JWT_SECRET } = ENV_VARS;
+
+  if (!token || !JWT_SECRET) {
+    return { decoded: null };
+  }
+
+  const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+
+  if (!decoded) {
+    return { decoded: null };
+  }
+  return { decoded };
 };

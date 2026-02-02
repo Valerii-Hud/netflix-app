@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import User from '../models/user.model';
-import { isError } from '../lib/utils';
+import { getUserById, isError, verifyToken } from '../lib/utils';
 import validator from 'validator';
 import {
   MAX_USERNAME_LENGTH,
@@ -31,7 +31,7 @@ const isPasswordCorrect = async (
   return { correct: isCorrect };
 };
 
-const response = (
+export const response = (
   res: Response,
   errorMessage: string,
   statusCode: 400 | 401 | 404 | 500 = 400
@@ -39,6 +39,7 @@ const response = (
   res.status(statusCode).json({ error: errorMessage });
   return { errorMessage, statusCode };
 };
+
 export const validateUserSignup = async (
   req: Request,
   res: Response,
@@ -139,6 +140,37 @@ export const validateUserLogin = async (
     isError({
       error,
       functionName: validateUserLogin.name,
+      handler: 'middleware',
+    });
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const protectRoute = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.cookies['secret_token'];
+
+    const { decoded } = verifyToken(token);
+
+    if (!decoded || !decoded.userId) {
+      return response(res, 'Unauthorized - Invalid Token Provided', 401);
+    }
+
+    const { user } = await getUserById(decoded.userId);
+    if (!user) {
+      return response(res, 'User not found', 404);
+    }
+    req.user = user;
+
+    next();
+  } catch (error) {
+    isError({
+      error,
+      functionName: protectRoute.name,
       handler: 'middleware',
     });
     res.status(500).json({ error: 'Internal Server Error' });
