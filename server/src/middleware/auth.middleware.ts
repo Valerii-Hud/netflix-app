@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import User from '../models/user.model';
-import { getUserById, isError, verifyToken } from '../lib/utils';
+import getUserById from '../repositories/user/getUserById';
+import isError from '../utils/helpers/isError';
 import validator from 'validator';
 import {
   MAX_USERNAME_LENGTH,
@@ -10,6 +11,7 @@ import {
 } from '../config/auth.config';
 import bcrypt from 'bcryptjs';
 import type { AuthRequest } from '../types';
+import verifyToken from '../utils/auth/verifyToken';
 
 const isValidUserName = (userName: string) => {
   return userNameRegex.test(userName);

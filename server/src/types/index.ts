@@ -14,5 +14,6 @@ export interface AuthRequest extends Request {
 }
 
 export interface ContentTypeRequest extends Request {
-  typeOfContent?: 'movie' | 'tv';
+  typeOfContent?: 'movie' | 'tv' | 'person';
+  typeOfRequest?: 'delete' | 'get' | 'default';
 }

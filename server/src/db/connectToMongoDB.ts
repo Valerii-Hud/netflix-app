@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import mongoose from 'mongoose';
-import { isError } from '../lib/utils';
+import isError from '../utils/helpers/isError';
 
 export const connectToMongoDB = async (connection: string | undefined) => {
   try {

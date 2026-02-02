@@ -6,6 +6,7 @@ import { ENV_VARS } from './config/env.config';
 import authRoutes from './routes/auth.route';
 import movieRoutes from './routes/movie.route';
 import tvRoutes from './routes/tv.route';
+import searchRoutes from './routes/search.route';
 
 import { connectToMongoDB } from './db/connectToMongoDB';
 import { protectRoute } from './middleware/auth.middleware';
@@ -18,6 +19,7 @@ app.use(cookieParser(COOKIE_SECRET));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/movie', protectRoute, movieRoutes);
 app.use('/api/v1/tv', protectRoute, tvRoutes);
+app.use('/api/v1/search', protectRoute, searchRoutes);
 
 app.listen(PORT, () => {
   connectToMongoDB(MONGO_URI);

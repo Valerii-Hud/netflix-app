@@ -1,9 +1,10 @@
 import type { Request, Response } from 'express';
-import { generateToken, isError } from '../lib/utils';
+import isError from '../utils/helpers/isError';
+import generateToken from '../utils/auth/generateToken';
 import User from '../models/user.model';
 import bcrypt from 'bcryptjs';
-import { ENV_VARS } from '../config/env.config';
 import type { AuthRequest } from '../types';
+import clearCookie from '../utils/auth/cookie';
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -70,13 +71,8 @@ export const login = async (req: AuthRequest, res: Response) => {
 };
 
 export const logout = (req: Request, res: Response) => {
-  const { NODE_ENV } = ENV_VARS;
   try {
-    res.clearCookie('secure_token', {
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: NODE_ENV === 'production',
-    });
+    clearCookie(res);
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
     isError({ error, functionName: logout.name, handler: 'controller' });

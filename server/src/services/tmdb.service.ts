@@ -1,7 +1,6 @@
 import { ENV_VARS } from '../config/env.config';
 import axiosInstance from '../lib/axios';
-import { isError } from '../lib/utils';
-
+import isError from '../utils/helpers/isError';
 interface Options {
   headers: {
     accept: 'application/json';

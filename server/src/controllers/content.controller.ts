@@ -1,9 +1,9 @@
 import type { Response } from 'express';
 import { fetchData } from '../services/tmdb.service';
-import { isError } from '../lib/utils';
+import isError from '../utils/helpers/isError';
 import type { ContentTypeRequest } from '../types';
 
-const LANGUAGE = '?language=en-US';
+import { LANGUAGE } from '../config/content.config';
 
 const getData = async (
   req: ContentTypeRequest,
@@ -13,7 +13,7 @@ const getData = async (
   getRandomOne = false
 ) => {
   try {
-    const data = await fetchData(`${url}${LANGUAGE}`);
+    const data = await fetchData(`${url}?${LANGUAGE}`);
 
     res.status(200).json({
       [responseKey]: getRandomOne
