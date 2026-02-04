@@ -2,6 +2,7 @@ interface ButtonProps {
   size: 'sm' | 'md' | 'lg' | 'full';
   text: string;
   color?: 'bg-red-600' | 'bg-red-700';
+  screen?: 'auth' | 'hero';
 }
 
 const Button = ({ size, text, color = 'bg-red-600' }: ButtonProps) => {

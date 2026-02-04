@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import useFormStore from '../store/useFormStore';
-import { useEffect } from 'react';
 
 interface FormProps {
   formType: 'login' | 'signup';
@@ -13,10 +12,8 @@ interface FormProps {
 }
 
 const Form = ({ formType, email, password, userName, onSubmit }: FormProps) => {
-  const { setUserName, setPassword, setEmail, resetData } = useFormStore();
-  useEffect(() => {
-    resetData();
-  }, [formType]);
+  const { setUserName, setPassword, setEmail } = useFormStore();
+
   return (
     <div className="hero-bg w-full h-screen">
       <header className="max-w-6xl mx-auto flex items-center justify-between p-4">
