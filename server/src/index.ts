@@ -1,6 +1,7 @@
 import express from 'express';
 import chalk from 'chalk';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import { ENV_VARS } from './config/env.config';
 import authRoutes from './routes/auth.route';
@@ -14,6 +15,12 @@ const app = express();
 const { PORT, MONGO_URI, COOKIE_SECRET } = ENV_VARS;
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
 app.use(cookieParser(COOKIE_SECRET));
 
 app.use('/api/v1/auth', authRoutes);

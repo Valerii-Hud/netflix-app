@@ -3,8 +3,16 @@ import HomePage from './pages/home/HomePage';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import Footer from './components/Footer';
+import useAuthStore from './store/useAuthStore';
+import { useEffect } from 'react';
 
 const App = () => {
+  const { checkAuth, user } = useAuthStore();
+
+  console.log({ user });
+  useEffect(() => {
+    checkAuth();
+  }, []);
   return (
     <>
       <Routes>

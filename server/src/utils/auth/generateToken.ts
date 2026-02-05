@@ -20,8 +20,8 @@ const generateToken = (userId: mongoose.Types.ObjectId, res: Response) => {
 
     res.cookie('secret_token', token, {
       httpOnly: true,
-      sameSite: 'strict',
       maxAge: MAX_TOKEN_AGE,
+      sameSite: NODE_ENV === 'production' ? 'strict' : 'lax',
       secure: NODE_ENV === 'production',
     });
   } catch (error) {

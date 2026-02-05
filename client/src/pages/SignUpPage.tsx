@@ -1,12 +1,22 @@
 import Form from '../ui/Form';
 import useFormStore from '../store/useFormStore';
+import useAuthStore from '../store/useAuthStore';
+import isDefaultError from '../types/guards';
 
 const SignUpPage = () => {
-  const { email, password, userName, resetData } = useFormStore();
+  const { signup } = useAuthStore();
+
+  const { email, password, userName, resetData, saveData } = useFormStore();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(email, userName, password);
-    resetData();
+    try {
+      signup({ email, userName, password });
+      resetData();
+    } catch (error) {
+      if (isDefaultError(error)) {
+        saveData({ userName, email, password });
+      }
+    }
   };
 
   return (
